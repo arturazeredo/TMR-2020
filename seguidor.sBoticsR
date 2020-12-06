@@ -1,16 +1,89 @@
-inicio
 
-tarefa seguir{
+
+#definição de variaveis
+
+numero wait = 400 #tempo de espera
+numero lsleft = 2 #porta sensor de luz esquerda
+numero lsright = 1 #porta sensor de luz direita
+numero lsmid = 3 #porta sensor de luz meio
+numero fwd = 300  #velocidade reta
+numero turn = 500 #velocidade curva
+
+#definição de funções
+
+tarefa green{ #vê a intersecção verde
+		se (cor(lsleft) == "VERDE") entao {    #curva 90º pra esquerda
+			frente (fwd)
+			esperar(wait)
+			direita(negativo(turn))
+			esperar (wait)
+			enquanto(cor(lsleft) != "PRETO") farei{
+				direita(negativo(turn))
+			}
+		}
+
+		se (cor(lsright) == "VERDE") entao {    #curva 90º pra direita
+			frente (fwd)
+			esperar (wait)
+			esquerda(negativo(turn))
+			esperar (wait)
+			enquanto(cor(lsright) != "PRETO") farei{
+				esquerda(negativo(turn))
+			}
+		}
+}
+
+tarefa curvaFechada{
+
+  se ((cor(lsright) == "PRETO") e (cor(lsmid) == "PRETO")) entao {     #virar para a direita em 90º
+
+    direita (turn)
+    esperar(wait)
+  }
+  senao se ((cor(lsleft) == "PRETO") e (cor(lsmid) == "PRETO")) entao {     #virar para a esquerda em 90º
+
+    esquerda (turn)
+    esperar(wait)
+  }
 
 }
 
+tarefa seguir{
+  green()
+
+  se ((cor(lsright) == "BRANCO") e (cor(lsleft) == "BRANCO")) entao {   #Se os dois sensores lerem branco andar pra frente
+			frente(fwd)
+		}
+
+		senao se ((cor(lsright) == "BRANCO") e (cor(lsright) == "PRETO")) entao {     #virar levemente para a esquerda
+
+			direita (negativo(turn))
+			esperar(wait)
+		}
+
+		senao se ((cor(lsright) == "PRETO") e (cor(lsleft) == "BRANCO")) entao {     #virar levemente para a direita
+
+			esquerda (negativo(turn))
+			esperar(wait)
+		}
+}
+
+
+
 tarefa desviar{
-    
+
 }
 
 tarefa pegar{
-    
+
 }
 
+#==================MAIN================
+inicio
+
+enquanto (3>1) farei{
+  seguir()
+
+}
 
 fim
